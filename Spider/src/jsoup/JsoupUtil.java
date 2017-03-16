@@ -31,9 +31,9 @@ public class JsoupUtil {
      * @return sql 
      */  
     public String getInsertSql(Link link) {  
-        return "insert into link (id, urlname, url, date) values ('"  
+        return "insert into link (id, urlname, url, uplayerid, date) values ('"  
                 + link.getId() + "','" + link.getUrlName() + "','"  
-                + link.getUrl() + "',NOW())";  
+                + link.getUrl() + "," + link.getUpLayerId() + "',NOW())";  
     }  
   
 }  

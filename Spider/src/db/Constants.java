@@ -1,6 +1,12 @@
 package db;
 
+/**
+ * @date 2017年3月16日
+ * @version 1.0
+ */
+
 public class Constants {
+	
 	/** 
      * mysql 驱动 
      */  
@@ -8,7 +14,7 @@ public class Constants {
     /** 
      * 链接 
      */  
-    public static final String DBURL    = "jdbc:mysql://localhost:3306/test?useUnicode=true&amp;characterEncoding=utf-8";  
+    public static final String DBURL    = "jdbc:mysql://localhost:3307/test?useUnicode=true&amp;characterEncoding=utf-8";  
     /** 
      * username 
      */  
@@ -16,7 +22,7 @@ public class Constants {
     /** 
      * password 
      */  
-    public static final String PASSWORD = "root";  
+    public static final String PASSWORD = "1qaz2wsx";  
     /** 
      * URL 
      */  
