@@ -5,9 +5,10 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.List;
 
-import com.mysql.jdbc.PreparedStatement;
+import pojo.Link;
 
 /**
  * @date 2017年3月16日
@@ -118,7 +119,7 @@ public class DbUtil {
 		}
 		// 4.执行语句
 		try {
-			rs = st.executeQuery("select id, url from link");
+			rs = st.executeQuery("select id, url, urlname, upLayerId from link");
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -134,10 +135,37 @@ public class DbUtil {
 			e.printStackTrace();
 		}
 
-		DbUtil.getInstance().release(rs, st, conn);
+		release(rs, st, conn);
 		String[] arr = rss.split(",");
 		List<String> list = java.util.Arrays.asList(rss);
 		return list;
+	}
+	
+	/**
+	 * get layer result
+	 * @param layerId
+	 */
+	public List<Link> getLayerById(int layerId) {
+		List<Link> res = new ArrayList<Link>();
+		Connection conn = DbUtil.getInstance().connection();
+
+		try {
+			st = conn.createStatement();
+			rs = st.executeQuery("select id, url, urlname, upLayerId from link where upLayerId = '" + layerId + "'");
+			while (rs.next()) {
+				res.add(new Link(Integer.valueOf(rs.getObject("id").toString()), rs.getObject("url").toString(), rs.getObject("urlName").toString(),
+						Integer.valueOf(rs.getObject("upLayerId").toString())));
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		if(res.size() == 0) {
+			return null;
+		} else {
+			return res;
+		}
 	}
 
 }
