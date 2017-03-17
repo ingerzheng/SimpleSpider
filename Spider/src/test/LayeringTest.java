@@ -16,6 +16,7 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import db.DbUtil;
 import pojo.Link;
 
 public class LayeringTest {
@@ -28,6 +29,8 @@ public class LayeringTest {
 	
 	//Jsoup Object
 	private JsoupUtil jsoup = JsoupUtil.getInstance();
+	//db util
+	private DbUtil dbUtil = DbUtil.getInstance();
 	
 	//time out
 	private final static int timeOut = 1000;
@@ -37,6 +40,7 @@ public class LayeringTest {
 	
 	private static Queue<Link> urlQueue = new LinkedList<Link>();
 	
+	private static String[] domain = {"bjtu.edu.cn", "njtu.edu.cn"}; 
 	/**
 	 * layering test
 	 * @param args
@@ -63,7 +67,9 @@ public class LayeringTest {
 		System.out.println("Yinger's Spider Initialize...");
 		Link rootLink = newLinkObject(rootUrlName, rootUrl, urlId);
 		urlLinkHashmap.put(rootLink.hashCode(), rootLink);
-		urlQueue.add(rootLink);		
+		urlQueue.add(rootLink);	
+		
+		dbUtil.insert(jsoup.getInsertSql(rootLink));
 	}
 	
 	/**
@@ -100,19 +106,24 @@ public class LayeringTest {
 			
 			if(urlLink.isEmpty()) {
 				continue;
-			} else if((urlLink.endsWith("htm") || urlLink.endsWith("html") || urlLink.endsWith("\\/")) && !urlLink.endsWith("shtml") && !urlName.isEmpty()) {
+			} else if(urlLink.startsWith("http://") && (urlLink.endsWith("index.htm") || urlLink.endsWith("\\/")) && !urlLink.endsWith("shtml") 
+					&& !urlName.isEmpty() && isBJUTWebsite(urlLink)) {
 				Link tempLink = newLinkObject(urlName, urlLink, upLayerId);
 				if(!urlLinkHashmap.containsKey(tempLink.hashCode())) {
 					urlLinkHashmap.put(tempLink.hashCode(), tempLink);					
-					//insert sql;
+					//insert sql;					
+					dbUtil.insert(jsoup.getInsertSql(tempLink));
 					print("%s %s %d", link.attr("abs:href"), link.text(), upLayerId);
 					urlQueue.add(tempLink);
 				}
 			} else {
-				Link tempLink = newLinkObject(urlName, urlLink, upLayerId);
-				if(!urlLinkHashmap.containsKey(tempLink.hashCode())) {
-					urlLinkHashmap.put(tempLink.hashCode(), tempLink);
-				}
+				if(isBJUTWebsite(urlLink) && !urlName.isEmpty()) {
+					Link tempLink = newLinkObject(urlName, urlLink, upLayerId);
+					if(!urlLinkHashmap.containsKey(tempLink.hashCode())) {
+						urlLinkHashmap.put(tempLink.hashCode(), tempLink);
+						dbUtil.insert(jsoup.getInsertSql(tempLink));
+					}
+				}			
 			}
 		}
 	}
@@ -122,6 +133,23 @@ public class LayeringTest {
 	 */
 	public static void print(String msg, Object... args) {  
         System.out.println(String.format(msg, args));  
-    }  
+    } 
+	
+	/**
+	 * is bjtu's website
+	 */
+	public static boolean isBJUTWebsite(String url) {
+		
+		if(url.contains(domain[0]) || url.contains(domain[1])) {
+			return true;
+		} else {
+			String deleteHttpUrl = url.substring(7);
+			char[] temp = deleteHttpUrl.toCharArray();
+			if(temp[0] >= '0' && temp[0] <= '9') {
+				return true;
+			}
+		}
+		return false;
+	}
 	
 }
