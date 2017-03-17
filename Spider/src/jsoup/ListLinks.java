@@ -10,6 +10,17 @@ import org.jsoup.select.Elements;
 
 public class ListLinks {
 
+	private static void print(String msg, Object... args) {  
+        System.out.println(String.format(msg, args));  
+    }  
+  
+    private static String trim(String s, int width) {  
+        if (s.length() > width)  
+            return s.substring(0, width-1) + ".";  
+        else  
+            return s;  
+    }  
+	
 	public static void main(String[] args) throws IOException {  
         String url ="http://www.bjtu.edu.cn";  
         int count=0;
@@ -40,16 +51,5 @@ public class ListLinks {
         	count++;
             print(" %d <%s>  (%s)",count, link.attr("abs:href"), trim(link.text(), 35));  
         }  
-    }  
-  
-    private static void print(String msg, Object... args) {  
-        System.out.println(String.format(msg, args));  
-    }  
-  
-    private static String trim(String s, int width) {  
-        if (s.length() > width)  
-            return s.substring(0, width-1) + ".";  
-        else  
-            return s;  
-    }  
+    }
 }  

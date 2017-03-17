@@ -29,19 +29,24 @@ public class CrawlWebSite {
     private static String insertSql = "";  
     private static Link link = new Link(); 
 	
-	private final static String rootUrl = "http://www.bjtu.edu.cn";
+	private final static String rootUrl = "http://www.bjtu.edu.cn/";
 	
 	private final static int timeOut = 30000;	
 	
 	/**网站上相对地址与绝对地址的映射*/
-	private static Map<String,String> absRelativeUrlMap = new HashMap<String,String>();	
+	private static Map<String,String> absRelativeUrlMap = new HashMap<String,String>();
+	
 	/**网站上的url与最终本地使用的url映射*/
 	private static Map<String,String> urlmapMap = new HashMap<String,String>();	
+	
 	/**网站上的css,js*/
-	private static Map<String,String> cssjsmapMap = new HashMap<String,String>();	
+	private static Map<String,String> cssjsmapMap = new HashMap<String,String>();
+	
 	private static List<File> allFiles = new ArrayList<File>();	
 	/**过滤掉不爬取的内容格式*/
+	
 	public static final String filterExtArray []  = {"rar","zip","bmp","dib","gif","jfif","jpe","jpeg","jpg","png","tif","tiff","ico","pdf","doc","docx","xls","xlsx"}; 
+	
 	/**
 	 * @param args
 	 * @throws IOException 
