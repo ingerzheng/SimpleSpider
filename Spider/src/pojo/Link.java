@@ -132,4 +132,11 @@ public class Link implements Serializable {
 		return url.hashCode();
 	}
 
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return id + "[" + urlName + "  " + url + "]";
+	}
 }
