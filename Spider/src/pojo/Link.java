@@ -78,6 +78,26 @@ public class Link implements Serializable {
 		this.upLayerId = upLayerId;
 	}
 	
+	
+	public Link() {
+		
+	}
+	
+	/**
+	 * @param id
+	 * @param urlName
+	 * @param url
+	 * @param upLayerId
+	 * @param date
+	 */
+	public Link(int id, String urlName, String url, int upLayerId) {
+		
+		this.id = id;
+		this.urlName = urlName;
+		this.url = url;
+		this.upLayerId = upLayerId;
+	}
+
 	/**
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
