@@ -21,7 +21,7 @@ public class Link implements Serializable {
 	 * link url
 	 */
 	private String url;
-	
+
 	/**
 	 * link uo layer id	
 	 */
@@ -76,6 +76,40 @@ public class Link implements Serializable {
 	 */
 	public void setUpLayerId(int upLayerId) {
 		this.upLayerId = upLayerId;
+	}
+	
+	/**
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(Object otherObject) {
+		
+		//a quick test to see if the objects are identical
+		if(this == otherObject) {
+			return true;
+		}
+		
+		//must return false if the explicit parameter is null
+		if(otherObject == null) {
+			return false;
+		}
+		
+		//if the classes don't match, they can't be equal
+		if(getClass() != otherObject.getClass()) {
+			return false;
+		}
+		
+		//now we know otherObject is a non-null Link
+		Link other = (Link) otherObject;
+		return url.equals(other.url);
+	}
+
+	/**
+	 * @see java.lang.Object#hashCode()
+	 */
+	@Override
+	public int hashCode() { 		
+		return url.hashCode();
 	}
 
 }
