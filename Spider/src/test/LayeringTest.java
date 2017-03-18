@@ -106,20 +106,21 @@ public class LayeringTest {
 			
 			if(urlLink.isEmpty()) {
 				continue;
-			} else if(urlLink.startsWith("http://") && (urlLink.endsWith("index.htm") || urlLink.endsWith("\\/")) && !urlLink.endsWith("shtml") 
-					&& !urlName.isEmpty() && isBJUTWebsite(urlLink)) {
-				Link tempLink = newLinkObject(urlName, urlLink, upLayerId);
-				if(!urlLinkHashmap.containsKey(tempLink.hashCode())) {
+			} else if(urlLink.startsWith("http://") &&  urlLink.endsWith("/") && !urlLink.endsWith("shtml") 
+					&& isBJUTWebsite(urlLink)) {
+				
+				if(!urlLinkHashmap.containsKey(urlLink.hashCode())) {
+					Link tempLink = newLinkObject(urlName, urlLink, upLayerId);
 					urlLinkHashmap.put(tempLink.hashCode(), tempLink);					
 					//insert sql;					
 					dbUtil.insert(jsoup.getInsertSql(tempLink));
-					print("%s %s %d", link.attr("abs:href"), link.text(), upLayerId);
+					//print("%s %s %d", link.attr("abs:href"), link.text(), upLayerId);
 					urlQueue.add(tempLink);
 				}
 			} else {
-				if(isBJUTWebsite(urlLink) && !urlName.isEmpty()) {
-					Link tempLink = newLinkObject(urlName, urlLink, upLayerId);
-					if(!urlLinkHashmap.containsKey(tempLink.hashCode())) {
+				if(isBJUTWebsite(urlLink)) {					
+					if(!urlLinkHashmap.containsKey(urlLink.hashCode())) {
+						Link tempLink = newLinkObject(urlName, urlLink, upLayerId);
 						urlLinkHashmap.put(tempLink.hashCode(), tempLink);
 						dbUtil.insert(jsoup.getInsertSql(tempLink));
 					}
@@ -145,7 +146,10 @@ public class LayeringTest {
 		} else {
 			String deleteHttpUrl = url.substring(7);
 			char[] temp = deleteHttpUrl.toCharArray();
-			if(temp[0] >= '0' && temp[0] <= '9') {
+			if(temp[0] >= '0' && temp[0] <= '9' && ((temp[1] >= '0' && temp[1] <= '9') || temp[1] <= '.')
+					&& ((temp[2] >= '0' && temp[2] <= '9') || temp[2] <= '.')
+					&& ((temp[3] >= '0' && temp[3] <= '9') || temp[3] <= '.')
+					&& temp[4] >= '0' && temp[4] <= '9') {
 				return true;
 			}
 		}
