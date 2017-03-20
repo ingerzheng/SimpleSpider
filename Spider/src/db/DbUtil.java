@@ -154,7 +154,7 @@ public class DbUtil {
 			rs = st.executeQuery("select id, url, urlname, upLayerId from link where upLayerId = '" + layerId + "'");
 			while (rs.next()) {
 				res.add(new Link(Integer.valueOf(rs.getObject("id").toString()), rs.getObject("url").toString(), rs.getObject("urlName").toString(),
-						Integer.valueOf(rs.getObject("upLayerId").toString())));
+						Integer.valueOf(rs.getObject("upLayerId").toString()), rs.getObject("savePath").toString()));
 			}
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block

@@ -18,6 +18,7 @@ import org.jsoup.select.Elements;
 
 import db.DbUtil;
 import pojo.Link;
+import util.FileUtils;
 
 public class LayeringTest {
 
@@ -26,6 +27,11 @@ public class LayeringTest {
 	//root url
 	private final String rootUrlName = "北京交通大学";
 	private final String rootUrl = "http://www.bjtu.edu.cn/index.htm";
+	
+	//file save root path
+	private final String rootPath = "D:/spider/";
+	private final String emptyPath = "";
+	private final String charSet = "utf-8";
 	
 	//Jsoup Object
 	private JsoupUtil jsoup = JsoupUtil.getInstance();
@@ -54,9 +60,10 @@ public class LayeringTest {
 		while(!urlQueue.isEmpty()) {
 			
 			Link spiderLink = urlQueue.poll();
-			layer.getAllLinks(spiderLink.getUrl(), spiderLink.getId());
+			layer.getAllLinks(spiderLink);
 			
 		}
+		System.out.println("Yinger's Spider has finish the work.");
 	}
 	
 	/**
@@ -65,7 +72,7 @@ public class LayeringTest {
 	public void init() {
 		
 		System.out.println("Yinger's Spider Initialize...");
-		Link rootLink = newLinkObject(rootUrlName, rootUrl, urlId);
+		Link rootLink = newLinkObject(rootUrlName, rootUrl, urlId, emptyPath);
 		urlLinkHashmap.put(rootLink.hashCode(), rootLink);
 		urlQueue.add(rootLink);	
 		
@@ -78,8 +85,8 @@ public class LayeringTest {
 	 * @param url
 	 * @param upLayerId
 	 */	
-	private Link newLinkObject(String urlName, String url, int id) {
-		return new Link(urlId++, urlName, url, id);
+	private Link newLinkObject(String urlName, String url, int id, String savePath) {
+		return new Link(urlId++, urlName, url, id, savePath);
 	}
 	
 	/**
@@ -88,14 +95,16 @@ public class LayeringTest {
 	 * @param upLayerId
 	 * @throws IOException 
 	 */
-	public void getAllLinks(String url, int upLayerId) {
+	public void getAllLinks(Link spiderLink) {
 		
-		print("Fetching url: %s...", url);
+		print("Fetching url: %s...", spiderLink.getUrl());
 		
 		Document doc;
 		try {
-			doc = Jsoup.connect(url).timeout(timeOut).get();
+			doc = Jsoup.connect(spiderLink.getUrl())
+					.userAgent("Mozilla/5.0 (Windows; U; Windows NT 5.1; zh-CN; rv:1.9.2.15)").timeout(timeOut).get();
 		} catch (IOException e) {
+			System.err.printf(spiderLink.getUrl() + " 页面无效。");
 			return;
 		}
 		Elements links = doc.select("a[href]");
@@ -106,11 +115,11 @@ public class LayeringTest {
 			
 			if(urlLink.isEmpty()) {
 				continue;
-			} else if(urlLink.startsWith("http://") &&  urlLink.endsWith("/") && !urlLink.endsWith("shtml") 
+			} else if(urlLink.startsWith("http://") && (urlLink.endsWith("/") || urlLink.endsWith("index.htm"))&& !urlLink.endsWith("shtml") 
 					&& isBJUTWebsite(urlLink)) {
 				
 				if(!urlLinkHashmap.containsKey(urlLink.hashCode())) {
-					Link tempLink = newLinkObject(urlName, urlLink, upLayerId);
+					Link tempLink = newLinkObject(urlName, urlLink, spiderLink.getId(), emptyPath);
 					urlLinkHashmap.put(tempLink.hashCode(), tempLink);					
 					//insert sql;					
 					dbUtil.insert(jsoup.getInsertSql(tempLink));
@@ -120,13 +129,51 @@ public class LayeringTest {
 			} else {
 				if(isBJUTWebsite(urlLink)) {					
 					if(!urlLinkHashmap.containsKey(urlLink.hashCode())) {
-						Link tempLink = newLinkObject(urlName, urlLink, upLayerId);
+						Link tempLink = newLinkObject(urlName, urlLink, spiderLink.getId(), emptyPath);
 						urlLinkHashmap.put(tempLink.hashCode(), tempLink);
 						dbUtil.insert(jsoup.getInsertSql(tempLink));
+						
+						//saveFile(tempLink);
 					}
 				}			
 			}
 		}
+		
+		saveFile(spiderLink);
+	}
+	
+	public void saveFile(Link spiderLink) {
+		Document doc;
+		try {
+			doc = Jsoup.connect(spiderLink.getUrl())
+					.userAgent("Mozilla/5.0 (Windows; U; Windows NT 5.1; zh-CN; rv:1.9.2.15)").timeout(timeOut).get();
+		} catch (IOException e) {
+			System.err.printf(spiderLink.getUrl() + " 页面无效。\n");
+			return;
+		}
+		
+		String html = doc.html();
+		
+		String filePath = spiderLink.getUrl().substring(7);
+		filePath = replaceCharWord(filePath, '/', '.');
+		FileUtils.writeFile(html, rootPath.concat(filePath), charSet);
+		
+		//print("save file %s", filePath);
+		
+		String updateSavepath = jsoup.getInsertSavepathSql(spiderLink, rootPath.concat(filePath));
+		dbUtil.insert(updateSavepath);
+		//print("update Link %s.", spiderLink.getUrl());
+	}
+	
+	public static String replaceCharWord(String oldString, char replace, char nowChar) {
+		char[] res = oldString.toCharArray();
+		
+		for(int i = 0; i < res.length; i++) {
+			if(res[i] == replace) {
+				res[i] = nowChar;
+			}
+		}
+		return new String(res);
 	}
 	
 	/**

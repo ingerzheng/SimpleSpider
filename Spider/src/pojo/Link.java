@@ -23,9 +23,14 @@ public class Link implements Serializable {
 	private String url;
 
 	/**
-	 * link uo layer id	
+	 * link up layer id	
 	 */
 	private int upLayerId;
+	
+	/**
+	 * link doc save path
+	 */
+	private String savePath;
 	
 	/**
 	 * insert db date
@@ -78,7 +83,20 @@ public class Link implements Serializable {
 		this.upLayerId = upLayerId;
 	}
 	
-	
+	/**
+	 * @return the savePath
+	 */
+	public String getSavePath() {
+		return savePath;
+	}
+
+	/**
+	 * @param savePath the savePath to set
+	 */
+	public void setSavePath(String savePath) {
+		this.savePath = savePath;
+	}
+
 	public Link() {
 		
 	}
@@ -90,12 +108,13 @@ public class Link implements Serializable {
 	 * @param upLayerId
 	 * @param date
 	 */
-	public Link(int id, String urlName, String url, int upLayerId) {
+	public Link(int id, String urlName, String url, int upLayerId, String savePath) {
 		
 		this.id = id;
 		this.urlName = urlName;
 		this.url = url;
 		this.upLayerId = upLayerId;
+		this.savePath = savePath;
 	}
 
 	/**
