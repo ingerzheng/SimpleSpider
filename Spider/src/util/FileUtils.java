@@ -123,9 +123,11 @@ public class FileUtils {
 	 * @return
 	 */
 	public static String parseFilePath(String filePath){
+		
 		File file = new File(filePath);
 		String fileName = getUrlFileName(file.getName());
 		String extName = getFileExtensionName(fileName);
+		
 		if("".equals(fileName) || "/".equals(fileName)){
 			fileName = "index.html";
 		}else if(StringUtil.isNullOrEmpty(extName)){
