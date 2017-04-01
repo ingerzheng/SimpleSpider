@@ -9,6 +9,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import task.SpiderTask1;
+import test.LayeringWithThreadPool;
 
 public class TaskExecutor1 {
 
@@ -40,7 +41,8 @@ public class TaskExecutor1 {
 			}			
 		};
 		
-		SpiderTask1 rootTask = new SpiderTask1(rootUrl, 0, 3000);		
+		SpiderTask1 rootTask = new SpiderTask1(rootUrl, 0, 3000);
+		LayeringWithThreadPool.urlLinkHashmap.put(rootUrl.hashCode(), rootUrl);
 		threadPool = Executors.newFixedThreadPool(maxThread);
 		taskQueue = new LinkedBlockingQueue<SpiderTask1>();
 		addTask(rootTask);

@@ -151,7 +151,6 @@ public class FileUtils {
 		}else{
 			path = file.getParent().concat(File.separator).concat(fileName);
 		}
-		 		
 		return path;
 	}
 	/**
@@ -210,6 +209,27 @@ public class FileUtils {
 			System.err.println("IO异常：" + e);
 		}
 		return sb.toString();
+	}
+	
+	public static String parseFilePathAndName(String filePath) {
+		
+		File file = new File(filePath);
+		String fileName = getUrlFileName(file.getName());
+		String extName = getFileExtensionName(fileName);
+		
+		//System.out.println(fileName + " " + extName);
+		if(filePath.endsWith("/")) {
+			filePath = filePath.replaceAll("[\\?/:*|<>\"]", "_") + ".html";
+		} else {
+			if("".equals(fileName) || "/".equals(fileName)){
+				fileName = "index.html";
+			} else if(StringUtil.isNullOrEmpty(extName)){
+				filePath = filePath.replaceAll("[\\?/:*|<>\"]", "_") + "index.html";
+			} else {
+				filePath = filePath.replaceAll("[\\?/:*|<>\"]", "_");
+			}
+		}
+		return filePath;
 	}
 
 }

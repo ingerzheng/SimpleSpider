@@ -6,6 +6,7 @@ package test;
 
 import java.util.concurrent.ConcurrentHashMap;
 
+import executor.DBExecutor;
 import executor.TaskExecutor1;
 
 public class LayeringWithThreadPool {
@@ -15,6 +16,7 @@ public class LayeringWithThreadPool {
 	public static void main(String[] args) {
 		
 		TaskExecutor1 te = new TaskExecutor1();
+		DBExecutor dbte = new DBExecutor();
 	}
 
 }
